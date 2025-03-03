@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html><html><head>
+<link rel="icon" data-savepage-href="https://tdlib.github.io/favicon.ico" href="">
+  <title>TDLib build instructions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --background: #fafafa;
+      --color: black;
+      --color-primary: #0088ff;
+      --color-primary-light: #42a7ff;
+      --color-code-block: #ebf9ff;
+      --color-select-border: rgb(211, 211, 211);
+      --color-checkbox-background: rgb(211, 211, 211);
+      --color-checkbox-tick: #ffffff;
+      --color-copy-success-background: #c1ffc6;
+      --color-copy-success-border: rgb(0, 255, 0);
+      --color-copy-fail-background: #ffcbcb;
+      --color-copy-fail-border: rgb(255, 0, 0);
+
+      color: var(--color);
+      background: var(--background);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #0e0e0e;
+        --color: rgb(190, 190, 190);
+        --color-primary: #0088ff;
+        --color-code-block: #101315;
+        --color-select-border: rgb(54, 54, 54);
+        --color-checkbox-background: rgb(51, 51, 51);
+        --color-checkbox-tick: #ffffff;
+        --color-copy-success-background: #001f00;
+        --color-copy-success-border: rgb(0, 255, 0);
+        --color-copy-fail-background: #1f0000;
+        --color-copy-fail-border: rgb(255, 0, 0);
+      }
+    }
+    body {
+      font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    }
+    :focus:not(:focus-visible) {
+      outline: none;
+    }
+    input:focus-visible, select:focus-visible, button:focus-visible {
+      box-shadow: 0 0 0 3px var(--color-primary);
+      outline: none;
+    }
+
+    .hide {
+      display: none;
+    }
+    div.main {
+      max-width: 1250px;
+      padding: 25px;
+      margin: auto;
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0;
+    }
+    .main > div {
+      margin-bottom: 20px;
+    }
+
+    #buildCommands {
+      font-family: Consolas, monospace;
+      margin-left: 40px;
+      background: var(--color-code-block);
+      padding: 5px;
+      margin-bottom: 0;
+      display: block;
+      overflow-x: auto;
+    }
+    #buildCommands ul {
+      list-style: '$ ';
+    }
+
+    a {
+      color: var(--color-primary);
+      text-decoration-color: transparent;
+      transition: text-decoration 200ms, color 200ms;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    a:focus-visible {
+      text-decoration: underline 2px;
+      color: var(--color-primary-light);
+      outline: none;
+    }
+    select, button {
+      border: 1px solid var(--color-select-border);
+      background-color: var(--background);
+      color: var(--color);
+      padding: 5px;
+      margin-top: 5px;
+      box-shadow: 0 0 0 0 var(--color-primary);
+      transition: border 200ms, padding 200ms, box-shadow 200ms;
+      border-radius: 999em;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    label * {
+      vertical-align: middle;
+    }
+
+    input[type=checkbox] {
+      margin-right: 5px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-color: var(--color-checkbox-background);
+      height: 20px;
+      width: 20px;
+      border-radius: 3px;
+      position: relative;
+      top: -1px; // Fix alignment
+      transition: background-color 200ms, box-shadow 200ms;
+    }
+    input[type=checkbox]::after {
+      content: "";
+      transition: border-color 200ms;
+      position: absolute;
+      left: 6px;
+      top: 2px;
+      width: 5px;
+      height: 10px;
+      border: solid transparent;
+      border-width: 0 3px 3px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+    input[type=checkbox]:checked {
+      background-color: var(--color-primary);
+    }
+    input[type=checkbox]:checked::after {
+      border-color: var(--color-checkbox-tick);
+    }
+
+    input[type=radio] {
+      margin-right: 5px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-color: var(--color-checkbox-background);
+      height: 20px;
+      width: 20px;
+      border-radius: 100%;
+      position: relative;
+      top: -2px; // Fix alignment
+      transition: background-color 200ms, box-shadow 200ms;
+    }
+    input[type=radio]::after {
+      content: "";
+      transition: border-color 200ms;
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      width: 0;
+      height: 0;
+      border-radius: 100%;
+      background-color: transparent;
+      transition: width 200ms, height 200ms, left 200ms, top 200ms, background-color 100ms;
+    }
+    input[type=radio]:checked::after {
+      background-color: var(--color-primary);
+      left: 2px;
+      top: 2px;
+      width: 16px;
+      height: 16px;
+    }
+
+    #copyBuildCommandsButton {
+      margin-left: 40px;
+    }
+    #copyBuildCommandsButton.success {
+      background: var(--color-copy-success-background);
+      border-color: var(--color-copy-success-border);
+    }
+    #copyBuildCommandsButton.fail {
+      background: var(--color-copy-fail-background);
+      border-color: var(--color-copy-fail-border);
+    }
+  </style>
+
+<style id="savepage-cssvariables">
+  :root {
+  }
+</style>
+<script id="savepage-shadowloader" type="text/javascript">
+  "use strict";
+  window.addEventListener("DOMContentLoaded",
+  function(event) {
+    savepage_ShadowLoader(5);
+  },false);
+  function savepage_ShadowLoader(c){createShadowDOMs(0,document.documentElement);function createShadowDOMs(a,b){var i;if(b.localName=="iframe"||b.localName=="frame"){if(a<c){try{if(b.contentDocument.documentElement!=null){createShadowDOMs(a+1,b.contentDocument.documentElement)}}catch(e){}}}else{if(b.children.length>=1&&b.children[0].localName=="template"&&b.children[0].hasAttribute("data-savepage-shadowroot")){b.attachShadow({mode:"open"}).appendChild(b.children[0].content);b.removeChild(b.children[0]);for(i=0;i<b.shadowRoot.children.length;i++)if(b.shadowRoot.children[i]!=null)createShadowDOMs(a,b.shadowRoot.children[i])}for(i=0;i<b.children.length;i++)if(b.children[i]!=null)createShadowDOMs(a,b.children[i])}}}
+</script>
+<meta name="savepage-url" content="https://tdlib.github.io/td/build.html?language=C">
+<meta name="savepage-title" content="TDLib build instructions">
+<meta name="savepage-pubdate" content="Unknown">
+<meta name="savepage-from" content="https://tdlib.github.io/td/build.html?language=C">
+<meta name="savepage-date" content="Sun Feb 16 2025 19:50:02 GMT+0200 (Eastern European Standard Time)">
+<meta name="savepage-state" content="Standard Items; Retain cross-origin frames; Merge CSS images; Remove unsaved URLs; Load lazy images in existing content; Max frame depth = 5; Max resource size = 50MB; Max resource time = 10s;">
+<meta name="savepage-version" content="33.9">
+<meta name="savepage-comments" content="">
+  </head>
+
+<body onload="onLoad(true)" onpopstate="onLoad(false)">
+
+<div class="main">
+  <div id="languageSelectDiv">
+    <p>Choose a programming language from which you want to use TDLib:</p>
+    <select id="languageSelect" onchange="onLanguageChanged(false)" autofocus="" class="large">
+      <option>Choose a programming language:</option>
+      <option>Python</option>
+      <option>JavaScript</option>
+      <option>Go</option>
+      <option>Java</option>
+      <option>Kotlin</option>
+      <option>C#</option>
+      <option>C++</option>
+      <option>Swift</option>
+      <option>Objective-C</option>
+      <option>Object Pascal</option>
+      <option>Dart</option>
+      <option>Rust</option>
+      <option>Erlang</option>
+      <option>PHP</option>
+      <option>Lua</option>
+      <option>Ruby</option>
+      <option>Crystal</option>
+      <option>Haskell</option>
+      <option>Nim</option>
+      <option>Clojure</option>
+      <option>D</option>
+      <option>Elixir</option>
+      <option>Vala</option>
+      <option>C</option>
+      <option>G</option>
+      <option>Other</option>
+    </select>
+  </div>
+
+  <div id="osSelectDiv" class="hide" style="display: block;">
+    <p>Choose an operating system on which you want to use TDLib:</p>
+    <select id="osSelect" onchange="onOsChanged()" class="large">
+      <option>Choose an operating system:</option>
+    <option>Windows</option><option>Linux</option><option>macOS</option><option>FreeBSD</option><option>OpenBSD</option><option>NetBSD</option></select>
+    <p></p>
+  </div>
+
+  <div id="linuxSelectDiv" class="hide" style="display: none;">
+    <p>Choose a Linux distro on which you want to use TDLib:</p>
+    <select id="linuxSelect" onchange="onOsChanged()" class="large">
+      <option>Choose a Linux distro:</option>
+      <option>Alpine</option>
+      <option>CentOS 7</option>
+      <option>CentOS 8</option>
+      <option>CentOS Stream 9</option>
+      <option>Debian 8</option>
+      <option>Debian 9</option>
+      <option>Debian 10+</option>
+      <option>Ubuntu 14</option>
+      <option>Ubuntu 16</option>
+      <option>Ubuntu 18</option>
+      <option>Ubuntu 20</option>
+      <option>Ubuntu 22</option>
+      <option>Ubuntu 24</option>
+      <option>Other</option>
+    </select>
+    <p></p>
+  </div>
+
+  <div id="buildOptionsDiv" class="hide" style="display: block;">
+    <div id="buildLtoDiv" class="hide" style="display: none;">
+      <label><input type="checkbox" id="buildLtoCheckbox" onchange="onOptionsChanged()">Enable Link Time Optimization (requires CMake &gt;= 3.9.0). It can significantly reduce binary size and increase performance, but sometimes it can lead to build failures.</label>
+    </div>
+
+    <div id="buildDebugDiv" class="hide" style="display: block;">
+      <label><input type="checkbox" id="buildDebugCheckbox" onchange="onOptionsChanged()">Build the debug binary. Debug binaries are much larger and slower than the release one.</label>
+    </div>
+
+    <div id="buildInstallLocalDiv" class="hide" style="display: none;">
+      <label><input type="checkbox" id="buildInstallLocalCheckbox" onchange="onOptionsChanged()">Install built TDLib to /usr/local instead of placing the files to td/tdlib.</label>
+    </div>
+
+    <p></p>
+
+    <div id="buildCompilerDiv" class="hide" style="display: none;">
+      <span>Choose which compiler you want to use to build TDLib:</span><br>
+      <label><input type="radio" id="buildCompilerRadioGcc" name="buildCompilerRadio" onchange="onOptionsChanged()" checked="">g++</label>
+      <label><input type="radio" id="buildCompilerRadioClang" name="buildCompilerRadio" onchange="onOptionsChanged()">clang (recommended)</label>
+      <p></p>
+    </div>
+
+    <div id="buildArchiverDiv" class="hide" style="display: none;">
+      <span>Choose which archiver application you want to use for VSIX creation:</span><br>
+      <label><input type="radio" id="buildArchiverRadio7Zip" name="buildArchiverRadio" onchange="onOptionsChanged()" checked="">7-Zip</label>
+      <label><input type="radio" id="buildArchiverRadioZip" name="buildArchiverRadio" onchange="onOptionsChanged()">zip</label>
+      <label><input type="radio" id="buildArchiverRadioWinRar" name="buildArchiverRadio" onchange="onOptionsChanged()">WinRAR</label>
+      <p></p>
+    </div>
+
+    <div id="buildShellDiv" class="hide" style="display: block;">
+      <span>Choose which shell application you want to use for building:</span><br>
+      <label><input type="radio" id="buildShellRadioPowerShell" name="buildShellRadio" onchange="onOptionsChanged()" checked="">PowerShell</label>
+      <label><input type="radio" id="buildShellRadioBash" name="buildShellRadio" onchange="onOptionsChanged()">mintty/Bash</label>
+      <p></p>
+    </div>
+
+    <div id="buildShellBsdDiv" class="hide" style="display: none;">
+      <span>Choose which shell application you want to use for building:</span><br>
+      <label><input type="radio" id="buildShellBsdRadioCsh" name="buildShellRadioBsd" onchange="onOptionsChanged()" checked="">tcsh/csh</label>
+      <label><input type="radio" id="buildShellBsdRadioBash" name="buildShellRadioBsd" onchange="onOptionsChanged()">Bash</label>
+      <p></p>
+    </div>
+
+    <div id="buildMacOsHostDiv" class="hide" style="display: none;">
+      <span>Choose host architecture:</span><br>
+      <label><input type="radio" id="buildMacOsHostRadioAppleSilicon" name="buildMacOsHostRadio" onchange="onOptionsChanged()" checked="">Apple silicon</label>
+      <label><input type="radio" id="buildMacOsHostRadioIntel" name="buildMacOsHostRadio" onchange="onOptionsChanged()">Intel</label>
+      <p></p>
+    </div>
+
+    <div id="buildBitnessDiv" class="hide" style="display: block;">
+      <span>Choose for which bitness you want to build TDLib:</span><br>
+      <label><input type="radio" id="buildBitnessRadio32" name="buildBitnessRadio" onchange="onOptionsChanged()" checked="">32</label>
+      <label><input type="radio" id="buildBitnessRadio64" name="buildBitnessRadio" onchange="onOptionsChanged()">64</label>
+      <p></p>
+    </div>
+
+    <div id="buildLowMemoryDiv" class="hide" style="display: none;">
+      <label><input type="checkbox" id="buildLowMemoryCheckbox" onchange="onOptionsChanged()"><span id="buildLowMemoryText">I have less than 4 GB of RAM.</span></label>
+    </div>
+
+    <div id="buildRootDiv" class="hide" style="display: none;">
+      <label><input type="checkbox" id="buildRootCheckbox" onchange="onOptionsChanged()">Build from root user (not recommended)</label>
+    </div>
+
+    <p></p>
+  </div>
+
+  <div id="buildTextDiv" class="hide" style="display: block;">
+    <p id="buildText">TDLib can be used from C on Windows through the <a href="https://github.com/tdlib/td#using-json">JSON</a> interface.<br>See <a href="https://github.com/tdlib/td/blob/master/example/README.md#c">examples</a> of such usage and already available third-party frameworks.<br></p>
+  </div>
+
+  <div id="buildCommandsDiv" class="hide" style="display: block;">
+    <p id="buildCommandsHeader">Here is complete instruction for TDLib binaries building:</p>
+    <p id="buildPre" style="display: block;"><ul><li>Note that Windows Subsystem for Linux (WSL) and Cygwin are not Windows environments, so you need to use instructions for Linux for them instead.</li><li>Download and install <a href="https://visualstudio.microsoft.com/vs/community/">Microsoft Visual Studio</a>. Enable C++ support while installing.</li><li>Download and install <a href="https://cmake.org/download/">CMake</a>; choose "Add CMake to the system PATH" option while installing.</li><li>Download and install <a href="https://git-scm.com/download/win">Git</a>.</li><li>Download and unpack <a href="https://windows.php.net/download">PHP</a>. Add the path to php.exe to the PATH environment variable.</li><li>Close and re-open PowerShell if the PATH environment variable was changed.</li><li>Run these commands in PowerShell to build TDLib and to install it to td/tdlib:</li></ul></p>
+    <code id="buildCommands"><ul><li>git clone https://github.com/tdlib/td.git</li><li>cd td</li><li>git clone https://github.com/Microsoft/vcpkg.git</li><li>cd vcpkg</li><li>git checkout 07b30b49e5136a36100a2ce644476e60d7f3ddc1</li><li>./bootstrap-vcpkg.bat</li><li>./vcpkg.exe install gperf:x86-windows openssl:x86-windows zlib:x86-windows</li><li>cd ..</li><li>Remove-Item build -Force -Recurse -ErrorAction SilentlyContinue</li><li>mkdir build</li><li>cd build</li><li>cmake -A Win32 -DCMAKE_INSTALL_PREFIX:PATH=../tdlib -DCMAKE_TOOLCHAIN_FILE:FILEPATH=../vcpkg/scripts/buildsystems/vcpkg.cmake ..</li><li>cmake --build . --target install --config Release</li><li>cd ..</li><li>cd ..</li><li>dir td/tdlib</li></ul></code>
+    <button id="copyBuildCommandsButton" onclick="copyBuildInstructions()" style="display: block;">
+        <span id="copyBuildCommandsText">Copy</span>
+    </button>
+  </div>
+</div>
+
+<script data-savepage-type="" type="text/plain"></script>
+
+
+
+</body></html>
